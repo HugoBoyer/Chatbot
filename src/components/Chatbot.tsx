@@ -157,13 +157,15 @@ const Chatbot = () => {
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Tapez votre message..."
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+            placeholder="Tapez votre message... (Shift+Enter pour une nouvelle ligne)"
             disabled={isLoading}
           />
-          <button onClick={sendMessage} disabled={isLoading}>
-            {isLoading ? 'Envoi...' : 'Envoyer'}
-          </button>
         </div>
       </div>
     </div>

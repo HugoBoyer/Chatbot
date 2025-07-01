@@ -1,14 +1,33 @@
 import { useState } from 'react';
+import type { Message } from '../types/message';
 
-interface Message {
-  role: 'user' | 'assistant';
-  content: string;
+interface Chat {
+  id: number;
+  title: string;
+  messages: Message[];
 }
 
 const Chatbot = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [chats, setChats] = useState<Chat[]>([
+    {
+      id: 1,
+      title: 'Nouvelle conversation',
+      messages: []
+    }
+  ]);
+  const [activeChatId, setActiveChatId] = useState(1);
+
+  const createNewChat = () => {
+    const newChat: Chat = {
+      id: chats.length + 1,
+      title: `Conversation ${chats.length + 1}`,
+      messages: []
+    };
+    setChats(prev => [...prev, newChat]);
+    setActiveChatId(newChat.id);
+  };
 
   const sendMessage = async () => {
     if (!input.trim()) return;
@@ -18,7 +37,18 @@ const Chatbot = () => {
       content: input
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setChats(prev => {
+      const updatedChats = [...prev];
+      const index = updatedChats.findIndex(chat => chat.id === activeChatId);
+      if (index !== -1) {
+        updatedChats[index] = {
+          ...updatedChats[index],
+          messages: [...updatedChats[index].messages, userMessage]
+        };
+      }
+      return updatedChats;
+    });
+
     setInput('');
     setIsLoading(true);
 
@@ -31,7 +61,11 @@ const Chatbot = () => {
         body: JSON.stringify({
           model: 'mistral',
           prompt: input,
-          stream: false
+          stream: false,
+          options: {
+            temperature: 0.7,
+            max_tokens: 2000
+          }
         })
       });
 
@@ -41,41 +75,96 @@ const Chatbot = () => {
         content: data.response || 'Je ne peux pas répondre à cette question.'
       };
 
-      setMessages(prev => [...prev, assistantMessage]);
+      setChats(prev => {
+        const updatedChats = [...prev];
+        const index = updatedChats.findIndex(chat => chat.id === activeChatId);
+        if (index !== -1) {
+          updatedChats[index] = {
+            ...updatedChats[index],
+            messages: [...updatedChats[index].messages, assistantMessage]
+          };
+        }
+        return updatedChats;
+      });
     } catch (error) {
       console.error('Erreur:', error);
-      setMessages(prev => [...prev, {
+      const errorMessage: Message = {
         role: 'assistant',
         content: 'Une erreur est survenue. Veuillez réessayer.'
-      }]);
+      };
+      setChats(prev => {
+        const updatedChats = [...prev];
+        const index = updatedChats.findIndex(chat => chat.id === activeChatId);
+        if (index !== -1) {
+          updatedChats[index] = {
+            ...updatedChats[index],
+            messages: [...updatedChats[index].messages, errorMessage]
+          };
+        }
+        return updatedChats;
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleChatChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setActiveChatId(Number(e.target.value));
+  };
+
+  const activeChat = chats.find(chat => chat.id === activeChatId) || chats[0];
+
   return (
     <div className="chat-container">
-      <div className="messages-container">
-        {messages.map((message, index) => (
-          <div key={index} className={`message ${message.role}`}>
-            <div className="message-content">
-              {message.content}
-            </div>
-          </div>
-        ))}
-      </div>
-      <div className="input-container">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="Tapez votre message..."
-          disabled={isLoading}
-        />
-        <button onClick={sendMessage} disabled={isLoading}>
-          {isLoading ? 'Envoi...' : 'Envoyer'}
+      <div className="chat-sider">
+        <div className="chat-list-header">
+          <h2>Conversations</h2>
+        </div>
+        <div className="chat-selector">
+          <select
+            value={activeChatId}
+            onChange={handleChatChange}
+            className="chat-selector-select"
+            aria-label="Sélectionner une conversation"
+          >
+            {chats.map(chat => (
+              <option key={chat.id} value={chat.id}>
+                {chat.title}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button
+          onClick={createNewChat}
+          className="new-chat-button"
+          title="Nouvelle conversation"
+        >
+          +
         </button>
+      </div>
+      <div className="chat-main">
+        <div className="messages-container">
+          {activeChat.messages.map((message: Message, index: number) => (
+            <div key={index} className={`message ${message.role}`} role="article">
+              <div className="message-content">
+                {message.content}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="input-container">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+            placeholder="Tapez votre message..."
+            disabled={isLoading}
+          />
+          <button onClick={sendMessage} disabled={isLoading}>
+            {isLoading ? 'Envoi...' : 'Envoyer'}
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -143,6 +143,7 @@ const Chatbot = () => {
         </button>
       </div>
       <div className="chat-main">
+        <div className='chat'>
         <div className="messages-container">
           {activeChat.messages.map((message: Message, index: number) => (
             <div key={index} className={`message ${message.role}`} role="article">
@@ -166,6 +167,7 @@ const Chatbot = () => {
             placeholder="Tapez votre message... (Shift+Enter pour une nouvelle ligne)"
             disabled={isLoading}
           />
+        </div>
         </div>
       </div>
     </div>

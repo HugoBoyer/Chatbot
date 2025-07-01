@@ -64,7 +64,7 @@ const Chatbot = () => {
           stream: false,
           options: {
             temperature: 0.7,
-            max_tokens: 2000
+            max_tokens: 500
           }
         })
       });
@@ -75,17 +75,23 @@ const Chatbot = () => {
         content: data.response || 'Je ne peux pas répondre à cette question.'
       };
 
-      setChats(prev => {
-        const updatedChats = [...prev];
-        const index = updatedChats.findIndex(chat => chat.id === activeChatId);
-        if (index !== -1) {
-          updatedChats[index] = {
-            ...updatedChats[index],
-            messages: [...updatedChats[index].messages, assistantMessage]
-          };
-        }
-        return updatedChats;
-      });
+      try {
+        setChats(prev => {
+          const updatedChats = [...prev];
+          const index = updatedChats.findIndex(chat => chat.id === activeChatId);
+          if (index !== -1) {
+            updatedChats[index] = {
+              ...updatedChats[index],
+              messages: [...updatedChats[index].messages, assistantMessage]
+            };
+          }
+          return updatedChats;
+        });
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour des messages:', error);
+        // En cas d'erreur, on garde l'état précédent
+        return;
+      }
     } catch (error) {
       console.error('Erreur:', error);
       const errorMessage: Message = {
@@ -143,31 +149,32 @@ const Chatbot = () => {
         </button>
       </div>
       <div className="chat-main">
-        <div className='chat'>
-        <div className="messages-container">
-          {activeChat.messages.map((message: Message, index: number) => (
-            <div key={index} className={`message ${message.role}`} role="article">
-              <div className="message-content">
-                {message.content}
+        <div className="chat">
+          <div className="messages-container">
+            {activeChat.messages.map((message: Message, index: number) => (
+              <div key={index} className={`message ${message.role}`} role="article">
+                <div className="message-content">
+                  {message.content}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-        <div className="input-container">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-            placeholder="Tapez votre message... (Shift+Enter pour une nouvelle ligne)"
-            disabled={isLoading}
-          />
-        </div>
+            ))}
+          </div>
+          <div className="input-container">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  sendMessage();
+                }
+              }}
+              placeholder="Tapez votre message... (Shift+Enter pour une nouvelle ligne)"
+              disabled={isLoading}
+            />
+            {isLoading && <div className="loading-spinner"></div>}
+          </div>
         </div>
       </div>
     </div>

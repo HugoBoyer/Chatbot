@@ -6,7 +6,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 .chat-sider {
@@ -101,6 +100,7 @@
 .message.user {
   background-color: #4CAF50;
   margin-left: auto;
+  margin-top: 60px;
 }
 
 .message.chat-main {
@@ -192,6 +192,8 @@ button:disabled {
   background-color: #333333;
   color: white;
   font-weight: 500;
+  margin-top: 60px;
+
 }
 
 .message-content {

@@ -1,53 +1,45 @@
-# React + TypeScript + Vite
+# Chatbot React avec Ollama et Mistral
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Ce projet est un chatbot React qui utilise Ollama avec le modèle Mistral pour générer des réponses.
 
-Currently, two official plugins are available:
+## Configuration requise
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Installez Ollama si ce n'est pas déjà fait
+2. Installez le modèle Mistral :
+   ```bash
+   ollama pull mistral
+   ```
+3. Lancez Ollama :
+   ```bash
+   ollama serve
+   ```
 
-## Expanding the ESLint configuration
+## Démarrage du projet
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Installez les dépendances :
+   ```bash
+   npm install
+   ```
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. Lancez l'application :
+   ```bash
+   npm run dev
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+## Structure du projet
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- `src/components/Chatbot.tsx` : Le composant principal du chatbot
+- `src/components/Chatbot.css` : Les styles du chatbot
+- `src/App.tsx` : Point d'entrée de l'application
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Communication avec Ollama
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+L'application utilise directement l'API REST d'Ollama pour communiquer avec le modèle Mistral. C'est une approche plus simple et plus efficace que d'utiliser une couche de compatibilité comme FastMCP car :
 
-export default tseslint.config([
-  globalIgnores(['dist']),
+- Ollama a déjà une API REST simple et bien documentée
+- Pas besoin d'une couche supplémentaire qui ajouterait de la complexité
+- Meilleure performance car une couche de moins à traverser
+- Plus facile à maintenir et à comprendre
   {
     files: ['**/*.{ts,tsx}'],
     extends: [

@@ -7,18 +7,23 @@
   padding: 0;
   box-sizing: border-box;
   overflow-x: hidden;
-  position: relative;
   flex-direction: row;
   align-items: stretch;
 }
 
 .chat {
-  margin-left:auto;
-  margin-right: auto;
   width: 70%;
   flex: 1;
   display: flex;
   flex-direction: column;
+  margin-left: auto;
+  margin-right: auto;
+  /*position: absolute;*/
+
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  background-color: transparent;
 }
 
 .chat-sider {
@@ -29,11 +34,13 @@
   border-right: 1px solid #404040;
   display: flex;
   flex-direction: column;
-  padding: 20px;
   flex-shrink: 0;
-  position: fixed;
   height: 100vh;
   overflow-y: auto;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
 }
 
 .chat-list-header {
@@ -87,18 +94,18 @@
 }
 
 .chat-main {
-  flex: 1;
+  /* flex: 1;*/
   background-color: #1a1a1a;
   display: flex;
   flex-direction: column;
-  margin-left: 200px;
-  margin-right: 0;
   padding: 0;
   flex-grow: 1;
-  min-width: 0;
-  width: calc(100% - 200px);
-  max-width: calc(100% - 250px);
+  /*min-width: 0;
+  width: 100%;
+  max-width: 1200px;
   position: relative;
+  z-index: 1;*/
+  margin-left: 15%;
 }
 
 .messages-container {
@@ -110,6 +117,7 @@
   flex-grow: 1;
   min-width: 0;
   position: relative;
+  z-index: 1;
 }
 
 .message {
@@ -147,12 +155,15 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  position: fixed;
   bottom: 0;
   left: 200px;
   right: 0;
   background-color: #1a1a1a;
   z-index: 1000;
+  max-width: 1200px;
+  width: 70%;
+  margin: 0 auto;
+  position: fixed;
 }
 
 button {

@@ -151,19 +151,16 @@
 }
 
 .input-container {
-  padding: 20px;
+  padding: 35px 0px;
   display: flex;
   gap: 10px;
   align-items: center;
-  bottom: 0;
-  left: 200px;
-  right: 0;
   background-color: #1a1a1a;
   z-index: 1000;
-  max-width: 1200px;
-  width: 70%;
-  margin: 0 auto;
-  position: fixed;
+
+  box-sizing: border-box;
+  position: sticky;
+  bottom: 0;
 }
 
 button {
@@ -186,10 +183,12 @@ button:disabled {
 
 input {
   flex: 1;
-  padding: 30px 30px 90px 30px;
+  width: 100%;
+  padding: 30px 30px 75px 30px;
   border: 1px solid #ddd;
   border-radius: 25px;
   font-size: 16px;
+  box-sizing: border-box;
 }
 
 .loading-spinner {
